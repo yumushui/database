@@ -39,7 +39,7 @@ print ('''
     the physical replication can send the DDL on master to slave , and slave can execute DDL automatic. The logical replication will not send DDL to slave.
 
     4 the Read/Write different
-    The physical replication can only read on standby database, but not write on salve . The logical can read and write on standby database.
+    The physical replication can only read on standby database, but not write on slave . The logical can read and write on standby database.
 
     5 the Version requst different
     The physical replication must have same big version in master and slave . The logical replication can have different version in master and slave .
@@ -188,3 +188,36 @@ chmod 0600 .pgpass
 
 ''')
 
+''' Use pg_basebackup command to backup and recover database.'''
+print (''' 
+    the step 8 , backup and scop data files ,can also use pg_basebackup command to commplete.
+
+    on slave 
+    pg_ctl stop -m fast
+    rm -fr /u01/pg12
+
+    use pg_basebackup tool to make basic bakcup
+    pg_basebackup -D /u01/pg12/data -Fp -Xs -v -P -h 192.168.1.100 -p 5432 -U repuser
+
+    on the log , you can get the basebakcup process info.
+    cp ~/recovery.conf  $PGDATA
+    pg_ctl start
+
+''')
+
+''' Check the replication status '''
+print('''
+    ---------------------------------
+    ## the replication status 
+
+    check info in pg_stat_replication
+
+    SELECT usename, application_name, client, client_addr, sync_state
+    FROM pg_stat_replication;
+
+    the sync_state have four choices 
+    async : means the slave is asyanc style
+    potenital : means the slave is asyanc , if sync node down ,the node can become sync slave
+    sync : means the slave is sync style
+    quorum : means the slave is quorum standby style
+''')
