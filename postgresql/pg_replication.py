@@ -107,10 +107,11 @@ the info inf .bash_profile can be changed base the effect.
     #max_wal_senders = 10		# max number of walsender processes
     #max_replication_slots = 10	# max number of replication slots
     #wal_keep_segments = 0		# in logfile segments; 0 disables   #hot_standby = on			# "off" disallows queries during recovery
+    #synchronous_commit = on		# synchronization level;
     
     check the paramter sql is 
 
-    select name,setting from pg_settings where name in ('wal_level', 'archive_mode', 'archive_command', 'max_wal_senders', 'max_replication_slots', 'wal_keep_segments', 'hot_standby');
+    select name,setting from pg_settings where name in ('wal_level', 'archive_mode', 'archive_command', 'max_wal_senders', 'max_replication_slots', 'wal_keep_segments', 'hot_standby', 'synchronous_commit');
 
     after change paramter ,the status is :
 local_12_db=# select name,setting from pg_settings where name in ('wal_level', 'archive_mode', 'archive_command', 'max_wal_senders', 'max_replication_slots', 'wal_keep_segments', 'hot_standby');
@@ -220,4 +221,57 @@ print('''
     potenital : means the slave is asyanc , if sync node down ,the node can become sync slave
     sync : means the slave is sync style
     quorum : means the slave is quorum standby style
+''')
+
+
+''' The sync replication  '''
+print ('''
+    ---------------------------------
+    ## the synchronous config
+
+    The async and sync replication is different in master commit trasaction, if not waiting the slave has got wal message.
+
+    The main step is the same as async replication ,but same paramter need check and set.
+
+    synchronous_commit 
+    the parameter has five choice :
+    on
+    off
+    local
+    remote_apply
+    remote_write
+
+    IN sigle instance env:
+    on : means the local commit need wait the wal log write complete message
+    local : means as the on
+    off : means will commit not wait the wal log write message, it apply to the data is not very accurate and need more performance.
+
+    IN streaming replication env:
+    on : the local wal and the remote wal all complete, the time high
+    remote_write : the local wal wait the remote write complete ,the timenot very high
+    remote_apply : the local and the remote wal all commplte, the time high
+
+    -- the sync replication config
+    ON slave 
+
+    vim recovery.conf
+primary_connifo = 'host=192.168.1.100  port=5432 user=repuser application_name=node2'
+
+    ON master
+
+    vim posgresql.conf
+synchronous_commit = on / remote_apply
+synchronous_standby_names = 'node2'
+
+    pg_ctl relaod
+    pg_ctl restart -m fast
+
+    SELECT usename, application_name, client_addr, sync_state
+    FROM pg_stat_replication;
+
+    the sync_state is : sync
+
+    The prod instance , synchronous_commit should set : off
+
+      
 ''')
