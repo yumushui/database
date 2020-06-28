@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+#-*- coding:utf-8 -*-
+
+'''
+How to mastering the postgresql?
+This questions can using a step and test. They all should by be understood and used skilled.
+
+1 The new in postgresql 12 ;
+2 Understanding Transactions and Locking
+3 Making Use of Indexes
+4 Handling Advanced SQL
+5 Log Files and System Statistics
+6 Optimizing Queries for Good Performance
+7 Writing Stored Procedures
+8 Managing PostgreSQL Security
+9 Handing Backup and Recovery
+10 Making Sense of Backups and Replication
+11 Deciding on Useful Extensions
+12 Troubleshooting PostgreSQL
+13 Migrating to PostgreSQL
+
+'''
+
+print('''
+对于PostgreSQL数据库到掌握，
+
+事务和锁，代表事务管理模型，索引使用，代表查询管理模型，这是关系型数据库两大核心功能，是共通到必须要掌握到内容。
+统计信息和日志，是查看数据库运行状态、读象、日志记录的方式；故障处理，是保证数据库稳定运行的必要前提，一个查看一个处理，是DBA最重要的技能。
+数据库安全行，备份恢复，replication复制，这些是数据库管理的通用技能。
+高级SQL，查询优化，存储过程，这是与开发直接相关的知识。
+新版本特性，扩展组件，数据迁移，是PostgreSQL特有的特色。
+
+归纳一下就是：
+核心原理： 事务 和 查询
+核心技能： 统计信息 和 故障处理
+通用管理技能： 安全性管理  备份恢复  replication复制
+通用开发技能： 高级SQL  查询性能优化  存储过程使用
+pg特有特色：  新版本特性  扩展组件 数据库迁移
+
+
+
+''')
+
+
+
