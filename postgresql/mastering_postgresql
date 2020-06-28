@@ -41,5 +41,92 @@ pg特有特色：  新版本特性  扩展组件 数据库迁移
 
 ''')
 
+print('''
 
+Log files and System Statistics
+
+-- Grathering runtime statistics
+\d pg_stat_activity
+
+SET application_name to 'www.cybertec-postgresql.com';
+SHOW application_name;
+SELECT pid, query_start, state_change, state, query FROM pg_stat_activity;
+
+SELECT pg_terminate_backend(pid)
+FROM pg_stat_activity
+WHERE pid <> pg_backend_pid() AND backend_type= 'client backend';
+
+-- Inspecting database
+\d pg_stat_database
+select * from pg_stat_database;
+
+-- Inspecting tables
+\d pg_stat_user_tables
+select * from pg_stat_user_tables;
+
+SELECT schemaname, relname, seq_scan, seq_tup_read,
+    seq_tup_read / seq_scan AS avg, idx_scan
+FROM pg_stat_user_tables
+WHERE seq_scan > 0
+ORDER BY seq_tup_read DESC
+LIMIT 25;
+
+\d pg_statio_user_tables
+
+-- Digging into index
+\d pg_stat_user_indexes
+
+select * from pg_stat_user_indexes;
+
+SELECT schemaname, relname, indexrelname, idx_scan,
+    pg_size_pretty(pg_relation_size(indexrelid)) AS idx_size,
+    pg_size_pretty(sum(pg_relation_size(indexrelid)) OVER (ORDER BY idx_scan, indexrelid)) AS total
+FROM pg_stat_user_indexes
+ORDER BY 6;
+
+-- Tracking the background worker
+\d pg_stat_bgwriter
+
+select * from pg_stat_bgwriter;
+
+-- Tracking, archiving and streaming
+\d pg_stat_archiver
+
+select * from pg_stat_archiver;
+
+\d pg_stat_replication
+select * from pg_stat_replication;
+
+\d pg_stat_wal_receiver
+select * from pg_stat_wal_receiver;
+
+-- checking SSL connections
+\d pg_stat_ssl
+select * from pg_stat_ssl;
+
+-- inspecting transactions in real time
+\d pg_stat_xact_user_tables
+
+select * from pg_stat_xact_user_tables;
+
+-- Tracking vacuum progress
+\d pg_stat_progress_vacuum
+select * from pg_stat_progress_vacuum;
+
+-- Using pg_stat_satements
+\d pg_stat_statements
+select * from pg_stat_statments;
+
+SELECT round((100 * total_time / sum(total_time) OVER())::numeric, 2) percent,
+    round(total_time::numeric, 2) AS total,
+    calls,
+    round(mean_time::numeric, 2) AS mean,
+    substring(query, 1, 40)
+FROM pg_stat_statements
+ORDER BY total_time DESC
+LIMIT 10;
+
+
+
+''')
 
