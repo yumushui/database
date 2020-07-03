@@ -129,4 +129,29 @@ LIMIT 10;
 
 
 ''')
+'''
+GitHub中开启二次验证Two-factor authentication，如何在命令行下更新和上传代码
+最近在使用GitHub管理代码，在git命令行管理代码时候遇到一些问题。
+如果开起了二次验证（Two-factor authentication两个要素认证），命令行会一直提示输入用户名和密码。查找了一下解决方法如下：
+
+1.准备Token信息。
+登陆GitHub，通过右上角的设置按钮进入设置页面，点击Personal access tokens，为你的账号创建一个Token， 
+创建好以后，保存这个Token，最好保存到你本地文件，因为离开页面后这个将会找不到了。 
+然后回到电脑的命令行界面。 
+2.设置git保存认证信息 
+执行 git config --global credential.helper store 
+3.使用git clone代码 
+git clone XXXX.git 
+此时会提示你输入UserName 和Password， 如： 
+Username for 'https://github.com': yourname（此处名称为你在GitHub上的UserNmae，而不是你GitHub的邮箱） 
+Password for 'https://hainuo@github.com':此处即为你获得的Token。 
+到此OK。 
+
+如果你没有设置git config --global credential.helper store，那么你每次git pull或者 git push时候都会提示你输入UserName和Password。 
+如果设置了该选项，则UserName和Password将会被保存，下次直接git pull或者git push即可。 
+其实该命令会在用户根目录下生成一个名为.git-credentials的文件，里面保存了你的UserName和Token。
+
+'''
+
+the postgresql in OS system need shell scripts to build and monitor.
 
