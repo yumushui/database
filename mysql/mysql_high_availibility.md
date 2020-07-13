@@ -175,11 +175,8 @@ mysql 高可用选择建议
 |--|--|--|--|
 |第一代|mysql 5.5|MHA|传统复制，主库存在没有把日志传输到从库上的风险，数据补偿不能处理mysql本身的幽灵事件|
 |第二代|mysql 5.6|FaceBook开源的mysql， Maxscale|利用 binlog server 和主库做半同步，保证数据安全，binlog server没有太好的开源解决方案|
-|第三代|mysql 5.7|Xenon,
-mysql replication manager,
-Github orchestrator|增强半同步，基本完美|
-|第四代|mysql 8.0
-mysql 5.7|mysql-router, proxysql, mgr|原生高可用解决方案|
+|第三代|mysql 5.7|Xenon,mysql replication manager,Github orchestrator|增强半同步，基本完美|
+|第四代|mysql 8.0mysql 5.7|mysql-router, proxysql, mgr|原生高可用解决方案|
 
 现在选择高可用推荐： 第三代，第四代架构中选择
 
