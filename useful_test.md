@@ -3,8 +3,8 @@
 ## Postgresql
 
 ### digoal  github pg blog
-https://github.com/digoal/blog/blob/master/README.md
-https://github.com/digoal/pgsql_admin_script
++ https://github.com/digoal/blog/blob/master/README.md
++ https://github.com/digoal/pgsql_admin_script
 
 
 ### Francs 
@@ -12,46 +12,46 @@ Francs's blog  Postgresql中文网
 https://postgres.fun/
 
 ### Vonng  冯若航
-https://github.com/Vonng/pg/blob/master/test/README.md   Postgresql监控实战
-https://github.com/Vonng/pg   
-https://github.com/Vonng/pg/blob/master/admin/migration-without-downtime.md   
-https://github.com/Vonng/pg/blob/master/admin/backup-overview.md
-https://github.com/Vonng/pg/blob/master/admin/replication-delay.md
-https://github.com/Vonng/pg/blob/master/admin/alert-overview.md
-http://vonng.com/      personal blog
++ https://github.com/Vonng/pg/blob/master/test/README.md   Postgresql监控实战
++ https://github.com/Vonng/pg   
++ https://github.com/Vonng/pg/blob/master/admin/migration-without-downtime.md   
++ https://github.com/Vonng/pg/blob/master/admin/backup-overview.md
++ https://github.com/Vonng/pg/blob/master/admin/replication-delay.md
++ https://github.com/Vonng/pg/blob/master/admin/alert-overview.md
++ http://vonng.com/      personal blog
 
 ### 2nd Quadrant PostgreSQL
-BDR   https://www.2ndquadrant.com/en/resources/postgres-bdr-2ndquadrant/
-PostgreSQL with High Availability    https://www.2ndquadrant.com/en/resources/highly-available-postgresql-clusters/
-Kubernetes Operators for HA PostgreSQL & BDR   https://www.2ndquadrant.com/en/resources/kubernetes-operators-for-highly-available-postgresql-and-bdr/
-Postgres Cloud Manager  https://www.2ndquadrant.com/en/resources/postgres-cloud-manager/  
-Postgres Installer  https://www.2ndquadrant.com/en/resources/postgresql-installer-2ndquadrant/
-2ndQPostgres  https://www.2ndquadrant.com/en/resources/2ndqpostgres/
-pglogical    https://www.2ndquadrant.com/en/resources/pglogical/
-Barman   https://www.2ndquadrant.com/en/resources/barman/
-repmgr   https://www.2ndquadrant.com/en/resources/repmgr/
-OmniDB   https://www.2ndquadrant.com/en/resources/omnidb/
-SQL Firewall  https://www.2ndquadrant.com/en/resources/postgresql-security-firewall/
-Postgres-XL  https://www.2ndquadrant.com/en/resources/postgres-xl/
++ BDR   https://www.2ndquadrant.com/en/resources/postgres-bdr-2ndquadrant/
++ PostgreSQL with High Availability    https://www.2ndquadrant.com/en/resources/highly-available-postgresql-clusters/
++ Kubernetes Operators for HA PostgreSQL & BDR   https://www.2ndquadrant.com/en/resources/kubernetes-operators-for-highly-available-postgresql-and-bdr/
++ Postgres Cloud Manager  https://www.2ndquadrant.com/en/resources/postgres-cloud-manager/  
++ Postgres Installer  https://www.2ndquadrant.com/en/resources/postgresql-installer-2ndquadrant/
++ 2ndQPostgres  https://www.2ndquadrant.com/en/resources/2ndqpostgres/
++ pglogical    https://www.2ndquadrant.com/en/resources/pglogical/
++ Barman   https://www.2ndquadrant.com/en/resources/barman/
++ repmgr   https://www.2ndquadrant.com/en/resources/repmgr/
++ OmniDB   https://www.2ndquadrant.com/en/resources/omnidb/
++ SQL Firewall  https://www.2ndquadrant.com/en/resources/postgresql-security-firewall/
++ Postgres-XL  https://www.2ndquadrant.com/en/resources/postgres-xl/
 
 
 ### NTT OSS Center DBMS Development and Support Team
 Tokyo, Japan
-https://github.com/ossc-db
-pg_rman  https://github.com/ossc-db/pg_rman
++ https://github.com/ossc-db
++ pg_rman  https://github.com/ossc-db/pg_rman
 
 
 ### postgresql high avralibale 
-https://github.com/digoal/PostgreSQL_HA_with_primary_standby_2vip
++ https://github.com/digoal/PostgreSQL_HA_with_primary_standby_2vip
 
 ###  Zalando SE 
 The org page fro Zalando, Europe's leading online fashion platform. Visit opensource.zalando.com for project stats.
-https://tech.zalando.com
++ https://tech.zalando.com
 
 patroni
-https://github.com/zalando/patroni
-https://postgres.fun/20200529182600.html
-https://wiki.postgresql.org/wiki/Replication,_Clustering,_and_Connection_Pooling
++ https://github.com/zalando/patroni
++ https://postgres.fun/20200529182600.html
++ https://wiki.postgresql.org/wiki/Replication,_Clustering,_and_Connection_Pooling
 
 
 ## MySQL
@@ -177,6 +177,7 @@ mysql 高可用选择建议
 |第二代|mysql 5.6|FaceBook开源的mysql， Maxscale|利用 binlog server 和主库做半同步，保证数据安全，binlog server没有太好的开源解决方案|
 |第三代|mysql 5.7|Xenon,mysql replication manager,Github orchestrator|增强半同步，基本完美|
 |第四代|mysql 8.0mysql 5.7|mysql-router, proxysql, mgr|原生高可用解决方案|
+
 
 现在选择高可用推荐： 第三代，第四代架构中选择
 
