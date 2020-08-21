@@ -369,3 +369,104 @@ replication 搭建到要点  pg_basebackup 备份时要加 -R参数，
 google 上给你的解决方案是，重做
 
 ''')
+
+
+print(
+'''
+复制延迟监控
+注意9.6和10之间有明显的差别
+
+# Database replication statistics
+# Add more labels & more metrics, compatible with default metrics
+pg_replication:
+  query: "SELECT
+            client_addr,
+            application_name,
+            sent_lsn - '0/0'                AS sent_lsn,
+            write_lsn - '0/0'               AS write_lsn,
+            flush_lsn - '0/0'               AS flush_lsn,
+            replay_lsn - '0/0'              AS replay_lsn,
+            extract(EPOCH FROM write_lag)   AS write_lag,
+            extract(EPOCH FROM flush_lag)   AS flush_lag,
+            extract(EPOCH FROM replay_lag)  AS replay_lag,
+            CASE WHEN pg_is_in_recovery() THEN NULL ELSE pg_wal_lsn_diff(pg_current_wal_lsn(), replay_lsn) :: FLOAT END AS replay_diff,
+            CASE WHEN pg_is_in_recovery() THEN NULL ELSE pg_wal_lsn_diff(pg_current_wal_lsn(), flush_lsn) :: FLOAT END AS  flush_diff,
+            CASE WHEN pg_is_in_recovery() THEN NULL ELSE pg_wal_lsn_diff(pg_current_wal_lsn(), write_lsn) :: FLOAT END AS  write_diff,
+            sync_priority
+          FROM pg_stat_replication;"
+
+
+-- 在  .psqlrc 中的格式为
+
+复制延迟监控
+注意9.6和10之间有明显的差别
+
+# Database replication statistics
+# Add more labels & more metrics, compatible with default metrics
+pg_replication:
+  query: "
+  
+SELECT client_addr, application_name, sent_lsn - '0/0' AS sent_lsn, write_lsn - '0/0' AS write_lsn, flush_lsn - '0/0' AS flush_lsn, replay_lsn - '0/0' AS replay_lsn, extract(EPOCH FROM write_lag) AS write_lag, extract(EPOCH FROM flush_lag)  AS flush_lag, extract(EPOCH FROM replay_lag)  AS replay_lag, CASE WHEN pg_is_in_recovery() THEN NULL ELSE pg_wal_lsn_diff(pg_current_wal_lsn(), replay_lsn) :: FLOAT END AS replay_diff, CASE WHEN pg_is_in_recovery() THEN NULL ELSE pg_wal_lsn_diff(pg_current_wal_lsn(), flush_lsn) :: FLOAT END AS  flush_diff, CASE WHEN pg_is_in_recovery() THEN NULL ELSE pg_wal_lsn_diff(pg_current_wal_lsn(), write_lsn) :: FLOAT END AS  write_diff, sync_priority FROM pg_stat_replication;
+          
+          "
+postgresql 10.x 叫做 wal、lsn
+postgresql 9.x 叫做 xlog、location
+
+在实际应用中经常需要根据 lsn/location 获取 wal/xlog 文件名
+
+postgresql 10.x
+postgres=# select pg_current_wal_lsn();
+ pg_current_wal_lsn 
+--------------------
+ 0/1656FE0
+(1 row)
+
+postgres=# select pg_current_wal_lsn(),
+                  pg_walfile_name(pg_current_wal_lsn()),
+                  pg_walfile_name_offset(pg_current_wal_lsn());
+
+ pg_current_wal_lsn |     pg_walfile_name      |       pg_walfile_name_offset   
+    
+--------------------+--------------------------+------------------------------------
+ 0/1656FE0          | 000000010000000000000001 | (000000010000000000000001,6647776)
+(1 row)
+
+
+postgresql 9.x
+postgres=# select pg_current_xlog_location();
+ pg_current_xlog_location 
+--------------------------
+ 596/C4DA2000
+(1 row)
+
+postgres=# select pg_current_xlog_location(),
+                  pg_xlogfile_name(pg_current_xlog_location()),
+                  pg_xlogfile_name_offset(pg_current_xlog_location());
+                  
+ pg_current_xlog_location |     pg_xlogfile_name     |       pg_xlogfile_name_offset       
+--------------------------+--------------------------+-------------------------------------
+ 596/C4DA2000             | 0000000100000596000000C4 | (0000000100000596000000C4,14295040)
+
+(1 row)
+
+
+pg日志与日志号，可参考文章：
+https://www.it610.com/article/1282854545679990784.htm
+
+postgres--流复制
+
+从库查询
+SELECT pg_is_in_recovery();
+SELECT pg_is_wal_replay_paused();
+SELECT pg_last_wal_receive_lsn();
+SELECT pg_last_wal_replay_lsn();
+SELECT * FROM pg_stat_get_wal_receiver();
+SELECT * FROM pg_stat_wal_receiver ;
+
+
+设置
+\set wal_receiver 'SELECT pg_is_in_recovery(); SELECT pg_is_wal_replay_paused(); SELECT pg_last_wal_receive_lsn(); SELECT pg_last_wal_replay_lsn(); SELECT * FROM pg_stat_get_wal_receiver(); SELECT * FROM pg_stat_wal_receiver;'
+
+
+'''
+)
