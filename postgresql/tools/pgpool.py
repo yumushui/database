@@ -16,6 +16,19 @@ pgpoolAdmin 图形界面管理工具
 http://pgpool.projects.pgfoundry.org/pgpoolAdmin/doc/index_en.html
 
 
+
+Harry HUANG - Dev  2:45 PM
+https://severalnines.com/resources/database-management-tutorials/postgresql-load-balancing-haproxy
+SeveralninesSeveralnines
+PostgreSQL Load Balancing with HAProxy
+Read about deployment, configuration, monitoring, ongoing maintenance, health check methods, read-write splitting, redundancy with VIP and Keepalived, and even more, in this PostgreSQL Load Balancing Tutorial
+Jun 6th
+2:46
+haproxy doesn't do read/write segregation
+2:46
+this article suggested to use pgpool
+
+
 ### 1.1 pgpool-II 定义
 
 pgpool-II 是一个位于 PostgreSQL服务器 和 PostgreSQL客户端之间的中间价，它可以提供如下功能：
@@ -247,6 +260,64 @@ pgpool stop
 如果想要强制关闭会话，停止 pgpool,命令为：
 pgpool -m fast stop
 
+pgpool.conf  中的全部参数
+
+
+pgpool.conf
+
+# CONNECTIONS
+- pgpool Connection Settings -
+- pgpool Communication Manager Connection Settings -
+- Backend Connection Settings -
+- Authentication -
+- SSL Connections -
+
+# POOLS
+- Concurrent session and pool size -
+- Life time -
+
+# LOGs
+- Where to log -
+- What to log -
+- Syslog specific -
+- Debug -
+
+# File Locations
+
+# Connection Pooling
+
+# Replication Mode
+- Degenerate handling -
+
+# Load Balancing Mode
+
+# Master/Slave Mode
+- Streaming -
+- Special commands -
+
+# Health Check Global parameters
+# Health Check Per Node Parameters (Optional)
+
+# Failover and Failback
+
+# Online Recovery
+
+# WatchDog
+- Enabling -
+- Connection to up stream servers -
+- Watchdog Communication Settings -
+- Virtual IP control Settings -
+- Behaivor on escalation Setting -
+- Watchdog consensus settings for failover -
+- LifeCheck Setting -
+  -- common --
+  -- heartbeat mode --
+  -- query mode --
+- Other pgpool Connection Settings -
+
+# Others
+
+# In Memory Query Memory Cache
 
 
 
@@ -733,6 +804,100 @@ Complete!
 
 
 
+-------  配置 pgpool 启动文件后，有报错：
+Aug 21 08:34:54 dba-test-vm-pg12-replicaiton-test-03 pgpool[31278]: [4-1] 2020-08-21 08:34:54: pid 31278: FATAL:  could not open pid file as /var/run/pgpool/pgpool.pid. reason: No such file or directory
+
+mkdir -p /var/run/pgpool/pgpool.pid
+
+启动 pgpool 命令如下：
+pgpool -n -d > /tmp/pgpool.log 2>&1 &
+pgpool -a  /etc/pool_hba.conf -f /etc/pgpool.conf  -F /etc/pcp.conf
+
+重新加载不需要重启生效的命令：
+pgpool reload 
+
+关闭 pgpool :
+pgpool -m fast stop 
+
+查看系统日志：
+tail -f /var/log/messages
+
+对应的日志为：
+Aug 21 08:40:26 dba-test-vm-pg12-replicaiton-test-03 pgpool[31294]: [4-1] 2020-08-21 08:40:26: pid 31294: LOG:  Backend status file /tmp/pgpool_status does not exist
+Aug 21 08:40:26 dba-test-vm-pg12-replicaiton-test-03 pgpool[31294]: [9-1] 2020-08-21 08:40:26: pid 31294: LOG:  memory cache initialized
+Aug 21 08:40:26 dba-test-vm-pg12-replicaiton-test-03 pgpool[31294]: [9-2] 2020-08-21 08:40:26: pid 31294: DETAIL:  memcache blocks :64
+Aug 21 08:40:26 dba-test-vm-pg12-replicaiton-test-03 pgpool[31294]: [11-1] 2020-08-21 08:40:26: pid 31294: LOG:  pool_discard_oid_maps: discarded memqcache oid maps
+Aug 21 08:40:26 dba-test-vm-pg12-replicaiton-test-03 pgpool[31294]: [12-1] 2020-08-21 08:40:26: pid 31294: LOG:  waiting for watchdog to initialize
+Aug 21 08:40:26 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [12-1] 2020-08-21 08:40:26: pid 31296: LOG:  setting the local watchdog node name to "10.170.0.2:9999 Linux dba-test-vm-pg12-replicaiton-test-03"
+Aug 21 08:40:26 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [13-1] 2020-08-21 08:40:26: pid 31296: LOG:  watchdog cluster is configured with 1 remote nodes
+Aug 21 08:40:26 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [14-1] 2020-08-21 08:40:26: pid 31296: LOG:  watchdog remote node:0 on 10.170.0.2:9000
+Aug 21 08:40:26 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [15-1] 2020-08-21 08:40:26: pid 31296: LOG:  interface monitoring is disabled in watchdog
+Aug 21 08:40:26 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [16-1] 2020-08-21 08:40:26: pid 31296: INFO:  IPC socket path: "/tmp/.s.PGPOOLWD_CMD.9000"
+Aug 21 08:40:26 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [17-1] 2020-08-21 08:40:26: pid 31296: LOG:  watchdog node state changed from [DEAD] to [LOADING]
+Aug 21 08:40:26 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [19-1] 2020-08-21 08:40:26: pid 31296: LOG:  new outbound connection to 10.170.0.2:9000
+Aug 21 08:40:31 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [24-1] 2020-08-21 08:40:31: pid 31296: LOG:  watchdog node state changed from [LOADING] to [JOINING]
+Aug 21 08:40:35 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [29-1] 2020-08-21 08:40:35: pid 31296: LOG:  watchdog node state changed from [JOINING] to [INITIALIZING]
+Aug 21 08:40:36 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [34-1] 2020-08-21 08:40:36: pid 31296: LOG:  I am the only alive node in the watchdog cluster
+Aug 21 08:40:36 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [34-2] 2020-08-21 08:40:36: pid 31296: HINT:  skipping stand for coordinator state
+Aug 21 08:40:36 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [35-1] 2020-08-21 08:40:36: pid 31296: LOG:  watchdog node state changed from [INITIALIZING] to [MASTER]
+Aug 21 08:40:36 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [37-1] 2020-08-21 08:40:36: pid 31296: LOG:  I am announcing my self as master/coordinator watchdog node
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [42-1] 2020-08-21 08:40:40: pid 31296: LOG:  I am the cluster leader node
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [42-2] 2020-08-21 08:40:40: pid 31296: DETAIL:  our declare coordinator message is accepted by all nodes
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [43-1] 2020-08-21 08:40:40: pid 31296: LOG:  setting the local node "10.170.0.2:9999 Linux dba-test-vm-pg12-replicaiton-test-03" as watchdog cluster master
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [45-1] 2020-08-21 08:40:40: pid 31296: LOG:  I am the cluster leader node but we do not have enough nodes in cluster
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [45-2] 2020-08-21 08:40:40: pid 31296: DETAIL:  waiting for the quorum to start escalation process
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31294]: [13-1] 2020-08-21 08:40:40: pid 31294: LOG:  watchdog process is initialized
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31294]: [13-2] 2020-08-21 08:40:40: pid 31294: DETAIL:  watchdog messaging data version: 1.1
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [46-1] 2020-08-21 08:40:40: pid 31296: LOG:  new IPC connection received
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31294]: [16-1] 2020-08-21 08:40:40: pid 31294: LOG:  Setting up socket for 0.0.0.0:9999
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31294]: [17-1] 2020-08-21 08:40:40: pid 31294: LOG:  Setting up socket for :::9999
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31294]: [18-1] 2020-08-21 08:40:40: pid 31294: LOG:  find_primary_node_repeatedly: waiting for finding a primary node
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31296]: [48-1] 2020-08-21 08:40:40: pid 31296: LOG:  new IPC connection received
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31297]: [15-1] 2020-08-21 08:40:40: pid 31297: LOG:  2 watchdog nodes are configured for lifecheck
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31297]: [16-1] 2020-08-21 08:40:40: pid 31297: LOG:  watchdog nodes ID:0 Name:"10.170.0.2:9999 Linux dba-test-vm-pg12-replicaiton-test-03"
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31297]: [16-2] 2020-08-21 08:40:40: pid 31297: DETAIL:  Host:"10.170.0.2" WD Port:9000 pgpool-II port:9999
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31297]: [17-1] 2020-08-21 08:40:40: pid 31297: LOG:  watchdog nodes ID:1 Name:"Not_Set"
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31297]: [17-2] 2020-08-21 08:40:40: pid 31297: DETAIL:  Host:"10.170.0.2" WD Port:9000 pgpool-II port:1533
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31294]: [33-1] 2020-08-21 08:40:40: pid 31294: LOG:  find_primary_node: primary node is 0
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31294]: [34-1] 2020-08-21 08:40:40: pid 31294: LOG:  find_primary_node: standby node is 1
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31294]: [35-1] 2020-08-21 08:40:40: pid 31294: LOG:  pgpool-II successfully started. version 4.1.2 (karasukiboshi)
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31294]: [36-1] 2020-08-21 08:40:40: pid 31294: LOG:  node status[0]: 1
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31294]: [37-1] 2020-08-21 08:40:40: pid 31294: LOG:  node status[1]: 2
+Aug 21 08:40:40 dba-test-vm-pg12-replicaiton-test-03 pgpool[31333]: [36-1] 2020-08-21 08:40:40: pid 31333: LOG:  PCP process: 31333 started
+Aug 21 08:40:41 dba-test-vm-pg12-replicaiton-test-03 pgpool[31331]: [18-1] 2020-08-21 08:40:41: pid 31331: LOG:  createing watchdog heartbeat receive socket.
+Aug 21 08:40:41 dba-test-vm-pg12-replicaiton-test-03 pgpool[31331]: [18-2] 2020-08-21 08:40:41: pid 31331: DETAIL:  bind receive socket to device: "eth0"
+Aug 21 08:40:41 dba-test-vm-pg12-replicaiton-test-03 pgpool[31331]: [19-1] 2020-08-21 08:40:41: pid 31331: LOG:  set SO_REUSEPORT option to the socket
+Aug 21 08:40:41 dba-test-vm-pg12-replicaiton-test-03 pgpool[31331]: [20-1] 2020-08-21 08:40:41: pid 31331: LOG:  creating watchdog heartbeat receive socket.
+Aug 21 08:40:41 dba-test-vm-pg12-replicaiton-test-03 pgpool[31331]: [20-2] 2020-08-21 08:40:41: pid 31331: DETAIL:  set SO_REUSEPORT
+Aug 21 08:40:41 dba-test-vm-pg12-replicaiton-test-03 pgpool[31332]: [18-1] 2020-08-21 08:40:41: pid 31332: LOG:  creating socket for sending heartbeat
+Aug 21 08:40:41 dba-test-vm-pg12-replicaiton-test-03 pgpool[31332]: [18-2] 2020-08-21 08:40:41: pid 31332: DETAIL:  bind send socket to device: eth0
+Aug 21 08:40:41 dba-test-vm-pg12-replicaiton-test-03 pgpool[31332]: [19-1] 2020-08-21 08:40:41: pid 31332: LOG:  set SO_REUSEPORT option to the socket
+Aug 21 08:40:41 dba-test-vm-pg12-replicaiton-test-03 pgpool[31332]: [20-1] 2020-08-21 08:40:41: pid 31332: LOG:  creating socket for sending heartbeat
+Aug 21 08:40:41 dba-test-vm-pg12-replicaiton-test-03 pgpool[31332]: [20-2] 2020-08-21 08:40:41: pid 31332: DETAIL:  set SO_REUSEPORT
+
+
+确认 pgpool 进程：
+
+
+连接 pgpool  实例，确认后端数据库：
+[root@dba-test-vm-pg12-replicaiton-test-03 run]# psql -h 10.170.0.3 -p 9999 postgres postgres
+Password for user postgres:
+psql (12.4, server 12.3)
+Type "help" for help.
+
+postgres=#
+postgres=#
+postgres=# show pool_nodes;
+ node_id |  hostname  | port | status | lb_weight |  role   | select_cnt | load_balance_node | replication_delay | replication_state | replication_sync_state | last_status_change
+---------+------------+------+--------+-----------+---------+------------+-------------------+-------------------+-------------------+------------------------+---------------------
+ 0       | 10.170.0.2 | 1533 | up     | 0.500000  | primary | 0          | true              | 0                 |                   |                        | 2020-08-21 08:46:00
+ 1       | 10.170.0.3 | 1533 | up     | 0.500000  | standby | 0          | false             | 0                 |                   |                        | 2020-08-21 08:46:00
+(2 rows)
+
+
+-- 第二个阶段，另外一个服务器上部署 pgpool
+
+yum install pgpool-II-12
 
 
 
