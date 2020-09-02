@@ -3263,4 +3263,88 @@ HAProxy- https实现插图(2)
 
 ------------------------
 
+https://space.bilibili.com/601631547/video
+找到相关的视频资料。
+
+
+
+
+
+
+
+
+
+本机测试
+
+下载安装介质：
+ http://download.openpkg.org/components/cache/haproxy
+
+可选的安装介质为：
+haproxy-1.8.5.tar.gz   
+......
+haproxy-1.8.15.tar.gz
+haproxy-1.9.0.tar.gz
+......
+haproxy-1.9.8.tar.gz
+haproxy-2.0.0.tar.gz
+......
+haproxy-2.0.9.tar.gz
+haproxy-2.1.0.tar.gz
+......
+haproxy-2.1.7.tar.gz
+haproxy-2.2.0.tar.gz
+haproxy-2.2.2.tar.gz
+
+
+下载最新版本 haproxy 安装介质：
+wget  http://download.openpkg.org/components/cache/haproxy/haproxy-2.2.2.tar.gz
+
+
+
+
+--------------------
+
+
+今天下午参加阿里云的内部会议，这次会议主要是针对阿里云国际站的海外客户，有几个与我们相关的重点：
+
+1 为解决RDS主实例升级、迁移、跨region等RDS主库变动的问题，阿里云也建议对于APP和RDS数据库之间，增加一层中间件，是业务程序与数据库解耦合，目前使用的技术是 MaxScale，对mysql RDS支持较好，后续会支持 posgresql RDS；
+对应中间件的说明文档为：
+https://help.aliyun.com/document_detail/85143.html
+
+2 对于阿里云对于多云平台的支持，主要是通过 DTS数据同步服务 和 DBS数据备份 实现数据同步、数据备份、异地灾备等功能，这些服务可以在阿里云RDS之间进行，也可以在 阿里云RDS与其他云平台数据之间进行，也可以只在其云平台之间进行；
+只要网络上能够 DTS，DBS 服务联通就可以；
+
+3 由于国内数据库市场，还是以mysql数据库生态居多，所以RDS功能优先以 mysql RDS为主，然后成熟后应用到其他数据库；目前阿里云内部已经将原来不同数据库团队各自独立的情况，调整为基础服务一个统一团队实现，
+比如DAS，监控等服务后续在mysql RDS看到的，和在 PostgreSQL RDS上看到的就是一致的，各种日常运维所需功能，也都会保持一致；
+
+4 阿里云数据库的发展方向是主推云原生数据库 PolarDB ，主要是采用存储计算分离，可以弹性扩展，支持海量存储的功能；现在这个基础上，添加了水平扩展中间件形成 PloarDB-X 云原生分布式数据库，实现云原生+分布式的无限扩展能力。
+
+5 阿里云针对全球业务，准备发布全球跨VPC的统一DNS功能，即全球不同地点的VPC可以访问同一个数据库域名地址，数据库域名地址底层为一主两从，一个主库进行数据写入，其他节点进行数据读取，不同region可以按照数据中心位置，就近读取。
+这个功能的支持，会在 PloarDB, postgresql RDS上都支持，这个架构与我们现在做都全球replication架构有类似之处，后续可以对比一下。
+
+6 阿里云推出 云数据库专属集群 MyBase，相比RDS释放了更多可以操作的权限。相关说明为：
+https://help.aliyun.com/product/156215.html?spm=a2c4g.11186623.6.540.e36b66efbndjA6
+
+7 阿里云现在整体硬件成本的缩减已经到一定瓶颈了，后续主要会在虚拟化、容器化上作为主要方向，以k8s为中心的云原生技术，扩展了很多技术内容，后续会整合很多产品，应用在阿里云多个方面。
+阿里云根据自己的已有了经验，编写了一本《云原生架构白皮书》，我也领了一本，大家感兴趣的话，也可以看一看。
+
+
+另外对于阿里云上的 ECS vitual IP 的情况确认如下：
+
+1 阿里云前几年支持过一段时间的 HAVIP，可以申请几个ECS上的虚拟漂移IP，现在已经不支持了。
+2 对于类似 virtual IP 漂移的功能，阿里云推荐使用 云解析 PrivateZone 实现：
+云解析 PrivateZone
+https://www.aliyun.com/product/pvtz?spm=5176.10695662.1395782.1.305e1061sG9JXQ
+但这种DNS解析，只包括域名地址，不包含port端口。
+3 如果临时短时间使用，可以用 ESC端口转发，这种方式和我们前面迁移Account Service数据，可以短时间临时使用下，由于没有高可用机制，不建议长期这样跑。
+
+对于 Google GCP 上不同VM的 virtual IP，目前确认的支持方案如下：
+
+Best Practices for Floating IP Addresses
+https://cloud.google.com/solutions/best-practices-floating-ip-addresses#comparing_option_3_to_option_1_internal_tcpudp_load_balancing
+
+这里的option 3和option 4大概就是vip想实现的网络的配置的东西，主要是增加vpc 静态路由。
+
+
+
 
