@@ -20,6 +20,10 @@ https://postgres.fun/
 + https://github.com/Vonng/pg/blob/master/admin/alert-overview.md
 + http://vonng.com/      personal blog
 
+### 陈华军  南京 苏宁
++ https://github.com/ChenHuajun
++ https://chenhuajun.github.io/
+
 ### 2nd Quadrant PostgreSQL
 + BDR   https://www.2ndquadrant.com/en/resources/postgres-bdr-2ndquadrant/
 + PostgreSQL with High Availability    https://www.2ndquadrant.com/en/resources/highly-available-postgresql-clusters/

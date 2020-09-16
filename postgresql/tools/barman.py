@@ -129,3 +129,13 @@ Entry
 Snapshot   Store
 '''
 
+
+
+'''
+postgresql WAL机制
+
+Postgresql的WAL日志，与 mysql数据库的 Bin log+Undo log, Oracle数据库的 Redo log类似，是用于方式数据丢失、备份数据、复制数据、数据库crash后数据恢复等功能的实现。
+如果汽车的三大件是发动机、变速箱、地盘，那么 PostgreSQL的WAL就相当于
+
+'''
+
