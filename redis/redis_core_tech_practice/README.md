@@ -31,12 +31,12 @@
 作者根据自己多年的研究以及教学经验，梳理了一套系统的Redis学习方法。将纷繁复杂的 Redis 知识和问题归纳在 “两大维度，三大主线”这个框架之中，建立其系统管和全局观，从而彻底搞懂底层实现原理。
 
 Redis知识全景图
-![]
+![redis_2_dimensions_3_main_lines](https://github.com/yumushui/database/blob/master/redis/picture/redis_2_dimensions_3_main_lines.jpg  "redis_2_dimensions_3_main_lines")
 
 此外，还可以具体分析常见的问题以及应对方案，讲解 Redis 在典型场景（比如缓存、秒杀）中的应用，可以快速掌握行之有效的实战经验，并应用在自己的Redis项目中，全方位提升实战能力。
 
 Redis问题画像图
-
+![Redis_problem_portrait](https://github.com/yumushui/database/blob/master/redis/picture/Redis_problem_portrait.jpeg  "Redis_problem_portrait")
 
 ## The module introduction
 
