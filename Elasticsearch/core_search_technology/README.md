@@ -29,7 +29,7 @@
 这个专栏中，陈东会通过20篇文章，将他在高性能广告引擎方面的敬仰，以及针对各种检索业务的深入思考和理解分享出来。系统地学习高效的检索方案和设计思路到底有那些，到底怎么用；并且会结合工业界中的具体业务场景，从最简单的解决方案入手，一步一步带你分析各种方案的优缺点，找到最优解。
 
 
-![core_search_technology](https://github.com/yumushui/database/tree/master/Elasticsearch/core_search_technology.jpg "core_search_technology")
+![core_search_technology](https://github.com/yumushui/database/blob/master/Elasticsearch/core_search_technology/core_search_technology.jpg "core_search_technology")
 
 
 专栏共包含三个模块，分别是基础技术篇、进阶算法篇和系统案例篇。
