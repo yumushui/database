@@ -169,7 +169,7 @@ https://time.geekbang.org/column/intro/212
 
 倒锥形的整个技术体系
 
-![message_queue_map](https://github.com/yumushui/database/blob/master/message_queue/message_queue_master_class/message_queue_map.jpg"message_queue_map")
+![message_queue_map](https://github.com/yumushui/database/blob/master/message_queue/message_queue_master_class/message_queue_map.jpg  "message_queue_map")
 
 那一个好的、成体系的技术栈，应该是怎么样嗯？应该是，**“基础深厚，涉猎广泛，融会贯通”**。
 
