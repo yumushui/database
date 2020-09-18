@@ -36,6 +36,7 @@
 这样，只能避免学习数据库产品时一下子就陷入安装部署、操作指令等细节中，摆脱学完以后还是不知道产品原理、碰到没有见过的问题依然是束手无策的窘境。
 
 compare_with_single_distributed_database
+![compare_with_single_distributed_database](https://github.com/yumushui/database/blob/master/distributed_database/wanglei_distribute_database/compare_with_single_distributed_database.png  "compare_with_single_distributed_database")
 
 同时，作者服务过多家大型金融机构，深度参与了产品选型工作，能从一个中立的角度，剖析主流产品的运行机制和理论 依据，横向比较它们的差异，并且解读企业在进行技术决策背后的动机，快速建立起对分布式数据库全面的认知体系。
 
@@ -155,7 +156,11 @@ https://time.geekbang.org/column/intro/331
 ```
 
 
+# Distributed Database Knowledge
 
 
+distributed_database_mindmap.jpg
+
+![distributed_database_mindmap.jpg](https://github.com/yumushui/database/blob/master/distributed_database/wanglei_distribute_database/distributed_database_mindmap.jpg "distributed_database_mindmap.jpg")
 
 
