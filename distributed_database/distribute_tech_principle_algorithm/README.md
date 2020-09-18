@@ -172,3 +172,11 @@ https://time.geekbang.org/column/intro/233
 
 ```
 
+# Distributed Knowledge
+
+
+
+distributed  technologe knowledge  graph
+
+![distributed_tech_knowledge_graph](https://github.com/yumushui/database/blob/master/distributed_database/distribute_tech_principle_algorithm/distributed_tech_knowlege_graph.jpg  "distributed_tech_knowledge_graph")
+
