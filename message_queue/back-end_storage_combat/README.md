@@ -117,6 +117,10 @@ https://time.geekbang.org/column/intro/287
 
 24 RocksDB： 不丢数据的高性能 KV，它能取代 Redis 吗？
 
+结课测试： 后端存储，100分试卷等你来挑战
+
+结束语  把奋斗当习惯
+
 ```
 
 
