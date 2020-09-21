@@ -42,7 +42,7 @@
 我们现在所在包罗万象的信息世界，正是最底层的 冯-诺伊曼 的基础体系上搭建而成，我们熟知的架构，则是最上层的业务架构。
 
 客户单和服务端应用的架构体系图
-![server_client_appliccation_architecture.jpg](https://github.com/yumushui/database/tree/master/architecture/xushiwei_architecture_class/server_client_appliccation_architecture.jpg "server_client_appliccation_architecture.jpg")
+![server_client_appliccation_architecture.jpg](https://github.com/yumushui/database/blob/master/architecture/xushiwei_architecture_class/server_client_appliccation_architecture.jpg "server_client_appliccation_architecture.jpg")
 
 对于架构师来说，不只需要想清楚业务应该怎么做分解，实际上，整个应用从底层的操作系统、编程语言到顶层的业务架构，每一层都需要进行各种决策。
 
