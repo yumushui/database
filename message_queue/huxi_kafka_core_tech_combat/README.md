@@ -29,6 +29,10 @@ Kafka是 LikedIn 开发并开源的一套分布式的高性能消息引擎服务
 
 如何顺利填补这些“坑”，是摆在每个Kafka学习者面前最需要解决的问题。
 
+kafka_core_tech_actual_combat
+![kafka_core_tech_actual_combat.jpg](https://github.com/yumushui/database/tree/master/message_queue/huxi_kafka_core_tech_combat/kafka_core_tech_actual_combat.jpg  "kafka_core_tech_actual_combat.jpg")
+
+
 专栏分为六部分。
 
 + 第一部分，**Kafka入门**。
