@@ -2,6 +2,11 @@
 
 在关系型数据库中，一般都会使用explain来显示SQL语句的执行计划。只是不同的数据库，这些命令格式，会有一些区别。
 
+PostgreSQL 12 与性能优化相关的官方文档为
+```
+https://www.postgresql.org/docs/12/performance-tips.html
+```
+
 PostgreSQL中执行计划的格式为：
 
 ```
