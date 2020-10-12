@@ -415,3 +415,102 @@ SQL执行的统计信息输出
 手工收集统计信息
 
 
+
+##  如何阅读查询执行计划
+
+学习数据库查询优化技术，第一步需要看明白执行计划，根据执行计划理解查询优化器的执行过程，体会优化技术的运用情况。所以读懂查询执行计划，是掌握查询优化的必要条件。
+
+从 PostgreSQL 和 mysql 数据库的执行计划格式和关键字，可以理解 这两种数据库的执行计划。
+
+示例：
+```
+演示如何阅读 PostgreSQL 和 mysql的查询执行计划。先创建5张表，命令如下：
+
+CREATE TABLE t1(id1 INT, a1 INT, b1 INT, PRIMARY KEY (id1));
+CREATE TABLE t2(id2 INT, a2 INT, b2 INT); 
+CREATE TABLE t3(id3 INT UNIQUE, a3 INT, b3 INT);
+CREATE TABLE t4(id4 INT, a4 INT, b4 INT);
+CREATE TABLE t5(id5 INT UNIQUE, a5 INT, b5 INT);
+
+(各个表的数据量为：
+t1表 10000 行数据，
+t2表 100 行数据，
+t3表 100 行数据，
+t4表 7 行数据，
+t5表 10 行数据)
+```
+
+###  PostgreSQL 的查询执行计划解析
+
+PostgreSQL 9.2 版本的显示执行计划的函数入口是 ExplainQuery 函数。通过 Explain 这个SQL语句触发，获得执行计划。
+显示执行计划，在新版本中的功能越来越丰富了，不仅包括路径信息（单表扫描方、两表连接算法、多表连接顺序，每个步骤的花费，总的花费），而且包含了缓冲区的使用情况，并提供多种输出格式，便于阅读，方便分析定位。
+
+####  Explain的功能
+
+####  查询执行计划
+
+理解 PostgreSQL的查询执行计划，需要理解执行顺序和节点解析两个部分。
+
++ 1.执行顺序
+
+执行5表连接的查询语句，演示 PostgreSQL 查询执行计划的样式，例如：
+
+对执行计划的查询分析为：
+自左向右，从上到下
+
++ 2.结点解析
+
+PostgreSQL 查询执行计划中各结点的解释为：
+
+PostgreSQL执行计划结点解释表
+
+|类型|结点|说明|
+|--|--|--|
+||||
+|扫描操作|Seq Scan|顺序扫描表，全表扫描|
+||Index Scan|索引扫描（读取索引文件，然后读取数据文件）|
+||Index Only Scan|索引只读扫描（只读取索引文件，不读取数据文件）|
+||Tid Scan|根据元组头中的 ctid 直接定位元组位置，读取数据文件|
+||Bitmap Index Scan|位图索引扫描（利用索引，获得满足条件的元组的位图，直接读取索引文件，不读取数据文件）|
+||Bitmap Heap Scan|位图Heap索引扫描（利用 Bitmap Index Scan得到的位图，获取元组，直接在数据文件中读取元组）|
+||Function Scan|函数扫描，处理范围表中有函数的情况（pg中允许函数直接返回元组集合，类似于表的元组集合）|
+||Subquery Scan|子查询扫描|
+||Values Scan|Values扫描（pg中提供了Values语句格式，允许Values链表可以返回元组集合，类似于表的元组集合）|
+||CTE Scan|CTE扫描（pg支持在select语句中用with语句定义子查询，对with子句的扫描称为CTE扫描）|
+||Worktable Scan|工作表扫描（与RecusiveUnion结点共同完成递归合并子查询 ）|
+||||
+|连接操作|Nested [type] loop|嵌套循环连接。type可能的值有 inner，left，right，full，Semi，Anti。Inner的显示可以省略|
+||Merge [type] Join|归并连接。type值同上。|
+||Hash [type] Join|哈希连接。type值同上。|
+||||
+|集合操作|Append|UNION/INTERCEPT/EXCEPT操作（多个子查询的集合操作）|
+||SetOp [type]|INTERCEPT/EXCEPT(需要排序).type值可能为 Intersect/Intersect ALL/Except/Except ALL。涉及的ALL操作需要去重，常以Append为输入结点|
+||HashSetOp [type]|INTERCEPT/EXCEPT(用Hash算法完成，不需要排序)。type值同上。涉及ALL的操作需要去重，常以Append为输入结点|
+||||
+|控制类型|Result|一次性结果获取（如子查询可以在查询优化结点获得结果，多以 InitPlan作为输入）|
+||ModifyTable|插入/修改/删除（Insert/Update/Delete操作的SQL）|
+||BitmapAnd|多个单独索引作为AND操作符的左右操作数|
+||BitmapOr|多个索引或者一个索引的多个索引列作为 OR 操作符的左右操作数|
+||Recursive Union|用于处理递归语句的Union语句（与Worktable Scan配合使用）|
+||||
+|过滤器|Filter|常规过滤器（对元组按条件进行过滤，完成选择操作）|
+||Join Filter|连接操作过滤器（Hash连接、归并连接、嵌套循环连接操作情况下使用的过滤器）|
+||One-Time|一趟过滤器（对于能一次性获得结果的 Result 操作，一趟过滤器即可满足过滤要求）|
+||||
+|连接条件|Hash Cond|显示 Hash 连接的连接条件|
+||Merge Cond|显示 Merge 连接的连接条件|
+||||
+|其他类型|Foreign Scan|外部表（对外部对象的访问）|
+||LockRows|查询中带有 For Update/FOR SHARE 的操作，需要对被操作对象进行加锁|
+||Remote SQL|配合 Foreign Scan表示远程的SQL|
+||InitPlan|与 Result 配合，在初始化查询计划阶段即可完成的操作|
+||Recheck Cond|对条件进行重新检查|
+||Output|表示输出信息|
+
+
+知道执行计划对功能和使用方法，可以理解执行计划结点的执行顺序，和每个结点的含义，就可以读懂执行计划，然后进行查询优化。
+
+
+
+
+
