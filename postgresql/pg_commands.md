@@ -293,6 +293,25 @@ WHERE
  public        | accounting_journal | public | accounting_journal_p20201006
 ```
 
+PostgreSQL 12 psql客户端支持快捷键dP列出分区表。
+
+```
+create table p (id int , info text, crt_time timestamp) partition by hash (id);    
+create table p0 partition of p  for values WITH (MODULUS 4, REMAINDER 0);    
+create table p1 partition of p  for values WITH (MODULUS 4, REMAINDER 1);    
+create table p2 partition of p  for values WITH (MODULUS 4, REMAINDER 2);   
+create table p3 partition of p  for values WITH (MODULUS 4, REMAINDER 3);    
+insert into p select generate_series (1,100000000) , md5(random()::text), now();  
+  
+  
+postgres=# \dP+  
+                           List of partitioned relations  
+ Schema | Name |  Owner   |       Type        | On table | Total size | Description   
+--------+------+----------+-------------------+----------+------------+-------------  
+ public | p    | postgres | partitioned table |          | 7303 MB    |   
+(1 row)  
+```
+
 ###  query the partition table number
 
 ```
@@ -311,5 +330,84 @@ WHERE
     AND c.relkind = 'r'
 GROUP BY 1,2 ORDER BY partition_num DESC;
 ```
+
+
+PostgreSQL 数据库实例只读锁定（readonly） - 硬锁定，软锁定，解锁
+
+https://github.com/digoal/blog/blob/master/201901/20190130_02.md
+
+PostgreSQL DBA最常用SQL
+
+https://github.com/digoal/blog/blob/master/202005/20200509_02.md
+
+
+PostgreSQL 数据库开发规范
+
+https://github.com/digoal/blog/blob/master/201609/20160926_01.md
+
+阿里云RDS PostgreSQL 12 + pgpool 的读写分离配置
+
+https://github.com/digoal/blog/blob/master/202002/20200229_01.md
+
+PostgreSQL HAProxy ha & load balance 代理
+
+https://github.com/digoal/blog/blob/master/201911/20191101_01.md
+
+PostgreSQL 会话ssl状态查询 - pg_stat_ssl , sslinfo
+
+https://github.com/digoal/blog/blob/master/201909/20190908_02.md
+
+如何修改PostgreSQL分区表分区范围 - detach attach - 拆分、合并、非平衡分区表、深度不一致分区表
+
+https://github.com/digoal/blog/blob/master/201906/20190621_02.md
+
+PostgreSQL 生成对象DDL语句 - ddlx 插件 - "show create"
+
+https://github.com/digoal/blog/blob/master/201906/20190610_01.md
+
+
+删除用户风险大，试试锁定用户
+
+https://github.com/digoal/blog/blob/master/201905/20190508_01.md
+
+PostgreSQL 三种心跳(keepalive)指标的应用 - 时间戳、redo(wal)位点、事务号
+
+https://github.com/digoal/blog/blob/master/201905/20190503_04.md
+
+PostgreSQL 12 preview - partitions pruned at plan time. 原生分区表性能提升23.5倍，已与pg_pathman持平。
+
+https://github.com/digoal/blog/blob/master/201903/20190331_01.md
+
+PostgreSQL 12 preview - REINDEX CONCURRENTLY
+
+https://github.com/digoal/blog/blob/master/201903/20190330_02.md
+
+PostgreSQL PITR 任意时间点恢复过程中如何手工得到recovery需要的下一个WAL文件名 - 默认情况下restore_command自动获取
+
+https://github.com/digoal/blog/blob/master/201903/20190305_01.md
+
+PostgreSQL 知识图谱 (xmind, png格式)
+
+https://github.com/digoal/blog/blob/master/201903/20190303_01.md
+
+PostgreSQL 持续稳定使用的小技巧 - 最佳实践、规约、规范
+
+https://github.com/digoal/blog/blob/master/201902/20190219_02.md
+
+PostgreSQL 普通表在线转换为分区表 - online exchange to partition table
+
+https://github.com/digoal/blog/blob/master/201901/20190131_01.md
+
+PostgreSQL pg_rewind，时间线修复，脑裂修复，flashback - 从库开启读写后，回退为只读从库。异步主从发生角色切换后，主库rewind为新主库的从库
+
+https://github.com/digoal/blog/blob/master/201901/20190128_02.md
+
+PostgreSQL HA patroni
+
+https://github.com/digoal/blog/blob/master/201901/20190105_02.md
+
+
+
+
 
 
