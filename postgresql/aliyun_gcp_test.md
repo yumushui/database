@@ -85,13 +85,27 @@ CREATE TABLE public.tab_overtime_test (
 
 |Cloud|Type|Operate|Times|start_time|end_time|overtime|
 |--|--|--|--|--|--|--|
-|Aliyun|Write|Failover|01|
-|Aliyun|Write|Failover|02|
-|Aliyun|Write|Failover|03|
-|Aliyun|Read|Failover|01|
-|GCP|Write|Failover|01|
+|Aliyun|Write|Failover|01|2020-12-07 20:38:26 |2020-12-07 12:38:58 |32 | 
+|Aliyun|Write|Failover|02|2020-12-07 12:50:51 |2020-12-07 12:51:24 |33 |
+|Aliyun|Write|Failover|03|2020-12-07 13:04:13 |2020-12-07 13:04:42 |29 |
+|Aliyun|Read|Failover|01|2020-12-07 21:19:37 |2020-12-07 21:20:12 |0 |
+|GCP|Write|Failover|01|2020-12-07 13:39:39 |2020-12-07 13:40:06 |27 |
+|GCP|Write|Failover|02|2020-12-07 13:48:44 |2020-12-07 13:49:29 |45 |
+|GCP|Write|Failover|03|2020-12-07 13:53:41 |2020-12-07 13:54:08 |27 |
+|GCP|Read|Failover|01|2020-12-07 13:59:02 |2020-12-07 13:59:46 |44 |
+
+From the testing result, we can see:
+1. The Aliyun RDS failover will has not effect to read, all read opertion are normal in the prograss.
+2. The GCP Cloud SQL for PG can not read and write in failover prograss.
+3. The Failover time of Aliyun is about 30 seconds now.
+4. The Failover time of GCP is between 27 and 44 seconds now.
+5. The Testing result about Aliyun write is not the same as our consider.
 
 
+The detail shell check log is in 
+```
+https://github.com/yumushui/database/blob/master/postgresql/aliyun_gcp_test.log
+```
 
 ##  5. Tesing Detail info
 
@@ -848,6 +862,16 @@ psql: error: could not connect to server: could not connect to server: Connectio
 
 Table check status
 ```
+ 254 | 20201207135338 | croninsert | 2020-12-07 13:53:38.174928+00
+ 255 | 20201207135339 | croninsert | 2020-12-07 13:53:39.23311+00
+ 256 | 20201207135340 | croninsert | 2020-12-07 13:53:40.291614+00
+ 257 | 20201207135341 | croninsert | 2020-12-07 13:53:41.347685+00
+ 
+ 258 | 20201207135353 | croninsert | 2020-12-07 13:54:08.87221+00
+ 259 | 20201207135409 | croninsert | 2020-12-07 13:54:09.967082+00
+ 260 | 20201207135411 | croninsert | 2020-12-07 13:54:11.02103+00
+ 261 | 20201207135412 | croninsert | 2020-12-07 13:54:12.095931+00
+ 262 | 20201207135413 | croninsert | 2020-12-07 13:54:13.195584+00
 ```
 
 GCP Cloud SQL log
