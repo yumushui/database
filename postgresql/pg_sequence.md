@@ -778,3 +778,66 @@ select nextval("sequence_name");
 seelct currval("sequence_name");
 ```
 
+阿里云 DTS 对于 PostgreSQL 的序列同步支持说明
+```
+https://help.aliyun.com/document_detail/26624.html?spm=a2c4g.11186623.6.644.7f066906LKs8gZ
+```
+
+DTS对 PG 的迁移限制
+
++ 一个数据迁移任务只能对一个数据库进行数据迁移，如果有多个数据库需要迁移，则需要为每个数据库创建数据迁移任务。
++ 待迁移的数据库名称中间不能包含短划线（-），例如dts-testdata。
++ 如果迁移过程中源库发生了主备切换，DTS的增量数据迁移无法实现断点续传。
++ 由于源库的主备节点可能存在同步延迟导致数据不一致，执行数据迁移时请使用源库的主节点作为迁移的数据源.
+
+说明 为避免数据迁移对业务的影响，请在业务低峰期执行数据迁移，您还可以根据源库的读写压力情况调整迁移速率，详情请参见调整全量迁移速率。
+
++ 增量数据迁移阶段仅支持DML操作（INSERT、DELETE、UPDATE）的同步。
+  
+说明 如果需要实现DDL操作的同步，请在配置迁移任务前，在源库中创建触发器和函数来捕获DDL信息，详情请参见通过触发器和函数实现PostgreSQL的DDL增量迁移。
+
++ DTS的校验对象为数据内容，暂不支持Sequence等元数据的校验，您需要自行校验。
+ 
+由于业务切换到目标端后，新写入的Sequence不会按照源库的Sequence最大值作为初始值去递增，您需要在业务切换前，在源库中查询对应Sequence的最大值，然后在目标库中将其作为对应Sequence的初始值。查询源库Sequence值的相关命令如下：
+
+```
+do language plpgsql $$
+declare
+  nsp name;
+  rel name;
+  val int8;
+begin
+  for nsp,rel in select nspname,relname from pg_class t2 , pg_namespace t3 where t2.relnamespace=t3.oid and t2.relkind='S'
+  loop
+    execute format($_$select last_value from %I.%I$_$, nsp, rel) into val;
+    raise notice '%',
+    format($_$select setval('%I.%I'::regclass, %s);$_$, nsp, rel, val+1);
+  end loop;
+end;
+$$;
+```
+
+一个实际执行的例子为：
+```
+accounting@rm-j6c6hildj3lqlk46h.pg.rds.aliyuncs.com:3433=>do language plpgsql $$
+accounting$> declare
+accounting$>   nsp name;
+accounting$>   rel name;
+accounting$>   val int8;
+accounting$> begin
+accounting$>   for nsp,rel in select nspname,relname from pg_class t2 , pg_namespace t3 where t2.relnamespace=t3.oid and t2.relkind='S'
+accounting$>   loop
+accounting$>     execute format($_$select last_value from %I.%I$_$, nsp, rel) into val;
+accounting$>     raise notice '%',
+accounting$>     format($_$select setval('%I.%I'::regclass, %s);$_$, nsp, rel, val+1);
+accounting$>   end loop;
+accounting$> end;
+accounting$> $$;
+NOTICE:  select setval('public.seq_accounting_reblance_id'::regclass, 2);
+NOTICE:  select setval('public.seq_accounting_manual_adjust_id'::regclass, 2);
+DO
+accounting@rm-j6c6hildj3lqlk46h.pg.rds.aliyuncs.com:3433=>
+```
+
+
+
