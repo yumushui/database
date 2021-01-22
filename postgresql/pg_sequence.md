@@ -840,4 +840,59 @@ accounting@rm-j6c6hildj3lqlk46h.pg.rds.aliyuncs.com:3433=>
 ```
 
 
+查询sequence的 last_value
+```
+select nspname,relname from pg_class t2 , pg_namespace t3 where t2.relnamespace=t3.oid and t2.relkind='S';
+
+select 'select last_value from ' || nspname || '.' ||  relname  || ';' from pg_class t2 , pg_namespace t3 where t2.relnamespace=t3.oid and t2.relkind='S';
+
+\ds
+
+select * from sequence_name;
+
+```
+
+## Get the sequence last value
+
+In pg 9.4 and pg 12, the start value are not the same. In pg 9.4, the start value is 1. In pg 12, the start vaule is the same as the last value.
+
+get the sequece last value
+
+```
+do language plpgsql $$
+declare
+  nsp name;
+  rel name;
+  val int8;
+begin
+  for nsp,rel in select nspname,relname from pg_class t2 , pg_namespace t3 where t2.relnamespace=t3.oid and t2.relkind='S'
+  loop
+    execute format($_$select last_value from %I.%I$_$, nsp, rel) into val;
+    raise notice '%',
+    format($_$ '%I.%I', %s ;$_$, nsp, rel, val);
+  end loop;
+end;
+$$;
+```
+
+reset the sequence last value
+
+```
+do language plpgsql $$
+declare
+  nsp name;
+  rel name;
+  val int8;
+begin
+  for nsp,rel in select nspname,relname from pg_class t2 , pg_namespace t3 where t2.relnamespace=t3.oid and t2.relkind='S'
+  loop
+    execute format($_$select last_value from %I.%I$_$, nsp, rel) into val;
+    raise notice '%',
+    format($_$select setval('%I.%I'::regclass, %s);$_$, nsp, rel, val+1);
+  end loop;
+end;
+$$;
+```
+
+
 

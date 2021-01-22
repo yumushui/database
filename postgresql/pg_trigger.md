@@ -234,5 +234,12 @@ AND NOT tgname LIKE 'RI_ConstraintTrigger_%';
 ```
 
 
+postgresql change user password
 
+```
+change user "db_admin" password to "123456", the command like:
+
+alter user db_admin with password 'rGfyzkKKkj2WbzO60bsfXq2qifEC1knL';
+
+```
 

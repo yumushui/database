@@ -409,5 +409,217 @@ https://github.com/digoal/blog/blob/master/201901/20190105_02.md
 
 
 
+1 asia-southeast1-a  staging-gcp-sg-vm-platform-account-service-pgpool-1  10.66.13.2
+2 asia-southeast1-b  staging-gcp-sg-vm-platform-account-service-pgpool-2  10.66.13.3
+3 europe-west4-a     staging-gcp-nl-vm-platform-account-service-pgpool-1  10.66.14.2
+4 europe-west4-b     staging-gcp-nl-vm-platform-account-service-pgpool-2  10.66.14.3
+5 us-east4-a         staging-gcp-us-vm-platform-account-service-pgpool-1  10.66.15.2
+6 us-east4-b         staging-gcp-us-vm-platform-account-service-pgpool-2  10.66.15.3
+
+
+
+maintenance blackout
+
+
+SQL语句技巧：查询存在一个表而不在另一个表中的数据记录
+http://www.cnblogs.com/zuowj/p/4013434.html
+
+ 
+
+方法一(仅适用单个字段)
+使用 not in ,容易理解,效率低
+
+select A.ID from A where A.ID not in (select ID from B)
+
+方法二（适用多个字段匹配）
+使用 left join...on... , "B.ID isnull" 表示左连接之后在B.ID 字段为 null的记录
+
+select A.ID from A left join B on A.ID=B.ID where B.ID is null 
+
+方法三（适用多个字段匹配）
+
+select * from B where (select count(1) as num from A where A.ID = B.ID) = 0
+
+方法四（适用多个字段匹配）
+
+select * from A where not exists(select 1 from B where A.ID=B.ID)
+
+
+
+SELECT count(upa.*)
+FROM user_primary_account upa
+WHERE upa.account_id::text NOT IN
+      (SELECT uuo.data ->> 'subjectId' FROM uam_user_onboard uuo);
+
+SELECT count(upa.*)
+FROM user_primary_account upa
+  left join uam_user_onboard uuo
+  on upa.account_id = (uuo.data ->> 'subjectId')
+WHERE (uuo.data ->> 'subjectId') is null;
+
+
+SELECT count(upa.*)
+FROM user_primary_account upa
+WHERE upa.account_id::text IN
+      (SELECT uuo.data ->> 'subjectId' FROM uam_user_onboard uuo);
+
+select id,user_id
+from user_primary_account upa
+left join uam_user_onboard uuo
+  on upa.account_id = (uuo.data ->> 'subjectId') limit 1;
+
+
+SELECT count(*)
+FROM user_primary_account upa
+         LEFT JOIN uam_user_onboard uuo ON upa.account_id::text = uuo.data ->> 'subjectId'
+WHERE (uuo.data->>'subjectId') IS NULL;
+
+
+
+select id,request_id,batch_id,created,last_updated,order_id,payment_seq from disbursement order by payment_seq desc limit  3;
+
+
+                  id                  |              request_id              | batch_id |            created            |         last_updated          |               order_id               | payment_seq
+--------------------------------------+--------------------------------------+----------+-------------------------------+-------------------------------+--------------------------------------+-------------
+ f470aa31-15cd-43b9-9a3c-2f8ba69efd8b | a62ab629-f393-40fd-a5cb-4a0c4f2a1d06 |          | 2020-12-03 10:04:47.216119+08 | 2020-12-03 11:55:10.347239+08 | 05337349-3cd7-445d-b83f-7a9eff496a57 |        2896
+ fb707de6-a9df-4e85-bc0c-92a4c4075fa2 | 79c344d9-94d4-419f-b722-e1905f3aaba3 |          | 2020-12-03 10:03:47.363587+08 | 2020-12-03 11:25:09.424749+08 | f47d9877-04d7-41e6-9202-05294a51e236 |        2895
+ 659eab83-d218-44aa-aa4b-8428423cd782 | 6ebc3477-c7bd-4d30-807a-104733aa4172 |          | 2020-12-01 18:37:39.633288+08 | 2020-12-02 09:25:54.170303+08 | 58849ca3-4dc9-4f86-859e-316063fe897c |        2894
+(3 rows)
+
+qbc=> select count(payment_seq) from disbursement ;
+ count
+-------
+  2895
+(1 row)
+
+
+select id,created,last_updated,order_id,payment_seq from disbursement order by payment_seq desc limit  3;
+
+
+select min(payment_seq),max(payment_seq),count(payment_seq) from disbursement;
+
+
+qbc=> select min(payment_seq),max(payment_seq),count(payment_seq) from disbursement;
+ min | max  | count
+-----+------+-------
+   1 | 2896 |  2895
+(1 row)
+
+
+
+##  PostgreSQL backup 
+
+
+-- 表备份测试
+```
+ check sql
+select table_schema,table_name from information_schema.tables where table_schema='bak';
+select count(*) from account;
+
+ backup sql
+create table bak."202009022_account" as table account with data;
+```
+
+执行结果：
+'''
+authorisation@127.0.0.1:5432=>  select table_schema,table_name from information_schema.tables where table_schema='bak';
+ table_schema |                           table_name
+--------------+-----------------------------------------------------------------
+ bak          | 20200415_1_role
+ bak          | 20190721_account_bak
+ bak          | 20191220_access_control_list
+ bak          | 20200415_1_users
+ bak          | 20200415_account
+ bak          | users_bak_20190617_before_update_to_remove_mobile_in_email
+ bak          | account_test
+ bak          | 20200306_account
+ bak          | 20200415_1_access_control_list
+ bak          | 20190829_access_control_list
+ bak          | 20191220_account
+ bak          | role_20200108
+ bak          | 20191122_account
+ bak          | 20200415_1_account_draft
+ bak          | 20200415_access_control_list
+ bak          | users_20200108
+ bak          | 20200326_role
+ bak          | 20190911_users
+ bak          | 20190903_users
+ bak          | test_access_control_list
+ bak          | account_20200108
+ bak          | access_control_list_20200108
+ bak          | 20200308_role
+ bak          | 20200308_access_control_list
+ bak          | users_bak_20190701_before_removing_duplicated_phonenumbers_of_k
+ bak          | 20200415_1_account
+ bak          | 20190820_account
+ bak          | 20200415_role
+ bak          | 20200306_users
+ bak          | 20200326_account
+ bak          | 20200415_account_draft
+ bak          | 20200415_users
+ bak          | test
+ bak          | 20200415_1_test
+ bak          | account_owner20200819
+ bak          | 20200902_account
+ bak          | 20200921_account
+(37 rows)
+
+authorisation@127.0.0.1:5432=>  select count(*) from account;
+ count
+-------
+ 51415
+(1 row)
+
+authorisation@127.0.0.1:5432=>  \timing
+Timing is on.
+authorisation@127.0.0.1:5432=>  create table bak."202009022_account" as table account with data;
+SELECT 51415
+Time: 1834.468 ms (00:01.834)
+authorisation@127.0.0.1:5432=>
+authorisation@127.0.0.1:5432=>  select table_schema,table_name from information_schema.tables where table_schema='bak';
+ table_schema |                           table_name
+--------------+-----------------------------------------------------------------
+ bak          | 20200415_1_role
+ bak          | 20190721_account_bak
+ bak          | 20191220_access_control_list
+ bak          | 20200415_1_users
+ bak          | 20200415_account
+ bak          | users_bak_20190617_before_update_to_remove_mobile_in_email
+ bak          | account_test
+ bak          | 20200306_account
+ bak          | 20200415_1_access_control_list
+ bak          | 20190829_access_control_list
+ bak          | 20191220_account
+ bak          | role_20200108
+ bak          | 20191122_account
+ bak          | 20200415_1_account_draft
+ bak          | 20200415_access_control_list
+ bak          | users_20200108
+ bak          | 20200326_role
+ bak          | 20190911_users
+ bak          | 20190903_users
+ bak          | test_access_control_list
+ bak          | account_20200108
+ bak          | access_control_list_20200108
+ bak          | 20200308_role
+ bak          | 20200308_access_control_list
+ bak          | users_bak_20190701_before_removing_duplicated_phonenumbers_of_k
+ bak          | 20200415_1_account
+ bak          | 20190820_account
+ bak          | 20200415_role
+ bak          | 20200306_users
+ bak          | 20200326_account
+ bak          | 20200415_account_draft
+ bak          | 20200415_users
+ bak          | test
+ bak          | 20200415_1_test
+ bak          | account_owner20200819
+ bak          | 20200902_account
+ bak          | 20200921_account
+ bak          | 202009022_account
+(38 rows)
+
+Time: 2.618 ms
+'''
 
 
